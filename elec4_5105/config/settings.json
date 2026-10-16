@@ -1,0 +1,29 @@
+{
+    "threshold": 0.045,
+    "sampling_count": 20,
+    "measurement_interval_ms": 300,
+    "live_update_interval_ms": 1000,
+    "sensor_mode": "tcs34725",
+    "sensor_integration_time_ms": 200,
+    "sensor_gain": 16,
+    "uniformity_region_ids": [
+        "P1",
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "P8",
+        "P9"
+    ],
+    "uniformity_sample_count": 20,
+    "uniformity_discard_count": 3,
+    "illumination_warmup_ms": 8000,
+    "position_settle_ms": 1000,
+    "uniformity_color_threshold": 0.025,
+    "uniformity_repeatability_threshold": 0.02,
+    "uniformity_clear_threshold": 0.3,
+    "use_clear_for_decision": false,
+    "result_indication_seconds": 2.0
+}

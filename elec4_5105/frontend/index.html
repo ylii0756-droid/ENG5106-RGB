@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>RGB Quality Inspection System</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="uniformity.css?v=2.0"
+    >
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <header class="topbar">
+
+            <div class="brand">
+
+                <p class="eyebrow">
+                    RGB MAKER
+                </p>
+
+                <h1>
+                    Colour Quality Inspection System
+                </h1>
+
+            </div>
+
+
+            <div class="system-status">
+
+                <div class="status-item">
+                    <span class="status-dot status-ok"></span>
+                    <span>Sensor Connected</span>
+                </div>
+
+                <div class="status-item">
+                    <span class="status-dot status-ok"></span>
+                    <span>Raspberry Pi Online</span>
+                </div>
+
+                <div class="status-item">
+                    <span class="status-dot status-warning"></span>
+                    <span id="reference-status">
+                        Reference Not Set
+                    </span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             PHYSICAL OUTPUT FEEDBACK
+        ========================== -->
+
+        <section
+            class="panel hardware-output-panel"
+            aria-live="polite"
+        >
+
+            <div class="section-header">
+
+                <div>
+                    <p class="section-label">
+                        PHYSICAL OUTPUTS
+                    </p>
+
+                    <h2>
+                        LED and Buzzer Feedback
+                    </h2>
+                </div>
+
+                <strong
+                    id="hardware-output-message"
+                    class="hardware-output-message"
+                >
+                    Waiting for an inspection result
+                </strong>
+
+            </div>
+
+            <div class="hardware-output-grid">
+
+                <div
+                    id="green-led-indicator"
+                    class="hardware-output-card green"
+                >
+                    <span class="hardware-output-dot"></span>
+                    <span>Green PASS LED</span>
+                    <strong id="green-led-state">OFF</strong>
+                </div>
+
+                <div
+                    id="red-led-indicator"
+                    class="hardware-output-card red"
+                >
+                    <span class="hardware-output-dot"></span>
+                    <span>Red FAIL LED</span>
+                    <strong id="red-led-state">OFF</strong>
+                </div>
+
+                <div
+                    id="buzzer-indicator"
+                    class="hardware-output-card buzzer"
+                >
+                    <span class="hardware-output-dot"></span>
+                    <span>Buzzer</span>
+                    <strong id="buzzer-state">OFF</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             LIVE MEASUREMENT
+        ========================== -->
+
+        <section class="panel">
+
+            <div class="section-header">
+
+                <div>
+
+                    <p class="section-label">
+                        LIVE MEASUREMENT
+                    </p>
+
+                    <h2>
+                        Sensor Reading
+                    </h2>
+
+                </div>
+
+
+                <div class="measurement-state">
+
+                    <span class="status-dot status-ok"></span>
+
+                    <span>
+                        Live
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="sensor-grid">
+
+                <div class="sensor-value">
+
+                    <span class="sensor-name">
+                        RED
+                    </span>
+
+                    <strong id="red-value">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="sensor-value">
+
+                    <span class="sensor-name">
+                        GREEN
+                    </span>
+
+                    <strong id="green-value">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="sensor-value">
+
+                    <span class="sensor-name">
+                        BLUE
+                    </span>
+
+                    <strong id="blue-value">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="sensor-value">
+
+                    <span class="sensor-name">
+                        CLEAR
+                    </span>
+
+                    <strong id="clear-value">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="colour-preview-wrapper">
+
+                    <span class="sensor-name">
+                        SAMPLE COLOUR
+                    </span>
+
+                    <div
+                        id="sample-colour"
+                        class="colour-preview"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             REFERENCE + RESULT
+        ========================== -->
+
+        <div class="two-column-layout">
+
+
+            <!-- REFERENCE -->
+
+            <section class="panel reference-panel">
+
+                <p class="section-label">
+                    REFERENCE
+                </p>
+
+                <h2>
+                    Reference Colour
+                </h2>
+
+
+                <div
+                    id="reference-colour"
+                    class="reference-colour-preview"
+                ></div>
+
+
+                <div class="reference-values">
+
+                    <div>
+                        <span>R</span>
+                        <strong id="reference-r">
+                            -
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>G</span>
+                        <strong id="reference-g">
+                            -
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>B</span>
+                        <strong id="reference-b">
+                            -
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="reference-info">
+
+                    <div>
+                        <span>
+                            Calibration samples
+                        </span>
+
+                        <strong id="calibration-count">
+                            20
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>
+                            Calibration status
+                        </span>
+
+                        <strong id="calibration-status">
+                            Not calibrated
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="set-reference-button"
+                    class="button secondary-button"
+                >
+                    Set Reference
+                </button>
+
+            </section>
+
+
+
+            <!-- QUALITY RESULT -->
+
+            <section class="panel result-panel">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <p class="section-label">
+                            QUALITY RESULT
+                        </p>
+
+                        <h2>
+                            Decision Gate
+                        </h2>
+
+                    </div>
+
+
+                    <div class="threshold-pill">
+
+                        T:
+
+                        <span id="threshold-value">
+                            0.045
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="result-text"
+                    class="result-text waiting"
+                >
+                    READY
+                </div>
+
+
+                <p
+                    id="result-description"
+                    class="result-description"
+                >
+                    Set a reference colour and measure a sample
+                    to begin inspection.
+                </p>
+
+
+                <div class="distance-card">
+
+                    <span class="section-label">
+                        DELTA / DISTANCE
+                    </span>
+
+
+                    <strong id="distance-value">
+                        0.0000
+                    </strong>
+
+
+                    <div class="distance-track">
+
+                        <div
+                            id="distance-progress"
+                            class="distance-progress"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="measure-button"
+                    class="button primary-button"
+                >
+                    Measure Sample
+                </button>
+
+            </section>
+
+        </div>
+
+
+
+
+        <!-- =========================
+             NINE-POINT UNIFORMITY
+        ========================== -->
+
+        <section class="panel" id="uniformity-panel">
+
+            <div class="section-header">
+                <div>
+                    <p class="section-label">
+                        SPATIAL COLOUR CONSISTENCY
+                    </p>
+                    <h2>
+                        Nine-Point Uniformity Test
+                    </h2>
+                </div>
+
+                <div class="threshold-pill">
+                    Colour T:
+                    <span id="uniformity-color-threshold">0.030</span>
+                    &nbsp; Repeatability T:
+                    <span id="uniformity-repeatability-threshold">0.020</span>
+                </div>
+            </div>
+
+            <p class="result-description">
+                Use a fixed 3 × 3 point layout on the rectangular sheet. Measure
+                P1 to P9 in the marked orientation, then evaluate spatial
+                colour consistency. The current thresholds are provisional.
+            </p>
+
+            <div class="uniformity-toolbar">
+                <label>
+                    Sheet ID
+                    <input
+                        id="uniformity-sheet-id-input"
+                        type="text"
+                        value="SHEET_001"
+                    >
+                </label>
+
+                <button
+                    id="uniformity-start-button"
+                    class="button primary-button"
+                >
+                    Start &amp; Warm Up
+                </button>
+
+                <button
+                    id="uniformity-reset-button"
+                    class="button secondary-button"
+                >
+                    Reset
+                </button>
+            </div>
+
+            <div
+                id="uniformity-status-text"
+                class="uniformity-status-line"
+            >
+                Not started
+            </div>
+
+            <div class="uniformity-layout-note">
+                <strong>Point layout — keep the same sample orientation:</strong>
+                <span>P1–P3: top row; P4–P6: middle row; P7–P9: bottom row.</span>
+            </div>
+
+            <div class="uniformity-region-buttons" aria-label="Nine-point 3 by 3 measurement layout">
+                <button class="uniformity-region-button" data-region-id="P1"><span>Measure P1</span><small>Top left</small></button>
+                <button class="uniformity-region-button" data-region-id="P2"><span>Measure P2</span><small>Top centre</small></button>
+                <button class="uniformity-region-button" data-region-id="P3"><span>Measure P3</span><small>Top right</small></button>
+                <button class="uniformity-region-button" data-region-id="P4"><span>Measure P4</span><small>Middle left</small></button>
+                <button class="uniformity-region-button" data-region-id="P5"><span>Measure P5</span><small>Centre</small></button>
+                <button class="uniformity-region-button" data-region-id="P6"><span>Measure P6</span><small>Middle right</small></button>
+                <button class="uniformity-region-button" data-region-id="P7"><span>Measure P7</span><small>Bottom left</small></button>
+                <button class="uniformity-region-button" data-region-id="P8"><span>Measure P8</span><small>Bottom centre</small></button>
+                <button class="uniformity-region-button" data-region-id="P9"><span>Measure P9</span><small>Bottom right</small></button>
+            </div>
+
+            <div class="uniformity-actions uniformity-actions-single">
+                <button
+                    id="uniformity-evaluate-button"
+                    class="button primary-button"
+                >
+                    Evaluate Nine Points
+                </button>
+            </div>
+
+            <div class="uniformity-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Point</th>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                            <th>Clear</th>
+                            <th>rn</th>
+                            <th>gn</th>
+                            <th>bn</th>
+                            <th>Repeatability p95</th>
+                        </tr>
+                    </thead>
+                    <tbody id="uniformity-region-table"></tbody>
+                </table>
+            </div>
+
+            <div class="uniformity-result-grid">
+                <div class="uniformity-result-card">
+                    <span class="section-label">OVERALL RESULT</span>
+                    <div
+                        id="uniformity-result-text"
+                        class="uniformity-result waiting"
+                    >
+                        READY
+                    </div>
+                    <p id="uniformity-result-description" class="result-description">
+                        Start a sheet test, measure P1 to P9, then evaluate.
+                    </p>
+                </div>
+
+                <div class="uniformity-metrics-card">
+                    <div class="uniformity-metrics">
+                        <div>
+                            <span>Max Pair Distance</span>
+                            <strong id="uniformity-max-pair-distance">-</strong>
+                        </div>
+                        <div>
+                            <span>Worst Pair</span>
+                            <strong id="uniformity-worst-pair">-</strong>
+                        </div>
+                        <div>
+                            <span>Max Repeatability p95</span>
+                            <strong id="uniformity-repeatability">-</strong>
+                        </div>
+                        <div>
+                            <span>Max Clear Deviation</span>
+                            <strong id="uniformity-clear-deviation">-</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             NINE-POINT HISTORY
+        ========================== -->
+
+        <section class="panel" id="uniformity-history-panel">
+
+            <div class="section-header">
+                <div>
+                    <p class="section-label">
+                        NINE-POINT DATA LOG
+                    </p>
+                    <h2>
+                        Previous Nine-Point Results
+                    </h2>
+                </div>
+
+                <div class="uniformity-history-actions">
+                    <span
+                        id="uniformity-history-count"
+                        class="uniformity-history-count"
+                    >
+                        0 completed tests
+                    </span>
+
+                    <button
+                        id="uniformity-history-refresh-button"
+                        class="button small-button"
+                    >
+                        Refresh
+                    </button>
+
+                    <button
+                        id="uniformity-export-button"
+                        class="button small-button"
+                        disabled
+                    >
+                        Export All Nine-Point CSV
+                    </button>
+                </div>
+            </div>
+
+            <p class="result-description">
+                Every completed P1–P9 test is saved automatically.
+                Select View to inspect the consistency result and all nine
+                measured point values. Historical results retain the
+                threshold that was used when each test was evaluated.
+            </p>
+
+            <div
+                id="uniformity-history-empty"
+                class="uniformity-history-empty"
+            >
+                No completed nine-point tests are available.
+            </div>
+
+            <div class="uniformity-history-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Sheet ID</th>
+                            <th>Overall</th>
+                            <th>Colour</th>
+                            <th>Max Pair</th>
+                            <th>Threshold</th>
+                            <th>Worst Pair</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="uniformity-history-table"></tbody>
+                </table>
+            </div>
+
+            <div
+                id="uniformity-history-detail"
+                class="uniformity-history-detail"
+                hidden
+            ></div>
+
+        </section>
+
+
+        <!-- =========================
+             SYSTEM SETTINGS
+        ========================== -->
+
+        <section class="panel" id="uniformity-settings-panel">
+
+            <p class="section-label">
+                NINE-POINT SETTINGS
+            </p>
+
+            <h2>
+                Decision Threshold
+            </h2>
+
+            <p class="result-description">
+                The colour threshold is compared with the maximum
+                normalised-RGB distance between any two of P1–P9.
+                Saving a new value affects future evaluations only;
+                previously saved results are not recalculated.
+            </p>
+
+            <div class="uniformity-settings-grid">
+
+                <label>
+                    Colour Uniformity Threshold
+                    <input
+                        id="uniformity-threshold-input"
+                        type="number"
+                        step="0.001"
+                        min="0.001"
+                        max="1.5"
+                        value="0.030"
+                    >
+                </label>
+
+                <button
+                    id="uniformity-threshold-save-button"
+                    class="button primary-button"
+                >
+                    Save Threshold
+                </button>
+
+                <div
+                    id="uniformity-threshold-save-status"
+                    class="uniformity-threshold-save-status"
+                >
+                    Current value will be loaded from the Raspberry Pi.
+                </div>
+
+            </div>
+
+            <div class="settings-grid uniformity-secondary-settings">
+
+                <label>
+                    Reference Calibration Samples
+                    <input
+                        id="sampling-count-input"
+                        type="number"
+                        value="20"
+                        min="1"
+                        max="100"
+                    >
+                </label>
+
+                <label>
+                    Single-Point Sample ID
+                    <input
+                        id="sample-id-input"
+                        type="text"
+                        value="S001"
+                    >
+                </label>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FOOTER
+        ========================== -->
+
+        <footer>
+
+            ENG5105 RGB Quality Inspection Prototype
+
+        </footer>
+
+    </div>
+
+
+    <script src="app.js?v=2.2"></script>
+    <script src="uniformity.js?v=2.0"></script>
+
+</body>
+
+</html>
